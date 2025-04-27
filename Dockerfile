@@ -26,10 +26,13 @@ ARG PORT
 ENV PORT $PORT
 EXPOSE $PORT
 
-COPY --from=builder /app/assets ./assets
-#COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/src ./src 
-COPY --from=builder /app/*.json /app/*-lock.yaml ./
+# COPY --from=builder /app/assets ./assets
+# #COPY --from=builder /app/dist ./dist
+# COPY --from=builder /app/src ./src 
+# COPY --from=builder /app/*.json /app/*-lock.yaml ./ /app/
+
+COPY --from=builder /app .
+
 
 RUN corepack enable && corepack prepare pnpm@latest --activate 
 ENV PNPM_HOME=/usr/local/bin
