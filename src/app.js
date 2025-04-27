@@ -179,7 +179,7 @@ const main = async () => {
     console.log(`🚀 Server running on http://localhost:${PORT}`);
 
     // 🔥 This keeps the server alive forever
-    await new Promise(() => {});
+    // await new Promise(() => {});
 }
 
 main()
