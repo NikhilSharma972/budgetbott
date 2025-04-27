@@ -33,13 +33,24 @@ process.on('uncaughtException', (error) => {
   
   const main = async () => {
     try {
-      console.log(`[${new Date().toISOString()}] 🚀 Starting BudgetBot...`);
+      console.log(`[${new Date().toISOString()}] 🚀 Starting BudgetBot...`); 
+      
   
       const adapterProvider = createProvider(Provider, {
         accountSid: process.env.accountSid,
         authToken: process.env.authToken,
         vendorNumber: process.env.vendorNumber,
       });
+
+      adapterProvider.server.post(
+        '/webhook',
+        async (req, res) => {
+          const { from, body } = req.body;
+          await adapterProvider.incoming(from, body); // Pass to builderbot
+          res.status(200).end(); // Clean empty 200 OK
+        }
+      );
+      
   
       const adapterDB = new Database({
         host: process.env.POSTGRES_DB_HOST,
@@ -64,12 +75,12 @@ process.on('uncaughtException', (error) => {
         database: adapterDB,
       });
 
-      adapterProvider.server.post(
-        '/webhook',
-        handleCtx(async (bot, req, res) => {
-          res.status(200).end();
-        })
-      );
+    //   adapterProvider.server.post(
+    //     '/webhook',
+    //     handleCtx(async (bot, req, res) => {
+    //       res.status(200).end();
+    //     })
+    //   );
   
     //   // --- Setup Webhook Route ---
     //   adapterProvider.server.post(
