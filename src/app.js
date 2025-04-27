@@ -1,185 +1,99 @@
-// import { join } from 'path'
-// import { createBot, createProvider, createFlow, addKeyword, utils } from '@builderbot/bot'
-// import { PostgreSQLAdapter as Database } from '@builderbot/database-postgres'
-// import { TwilioProvider as Provider } from '@builderbot/provider-twilio' 
+// --- Setup Global Error Handlers ---
 
-const { join } = require('path');
-const { createBot, createProvider, createFlow, addKeyword, utils } = require('@builderbot/bot');
-const { PostgreSQLAdapter: Database } = require('@builderbot/database-postgres');
-const { TwilioProvider: Provider } = require('@builderbot/provider-twilio');
-
-
-
-// const { createFlow, createBot, createProvider, addKeyword, utils } = require('@builderbot/bot');
-
-const budgetFlow = require('./flows/budgetFlow.js');
-const addExpenseFlow= require('./flows/addExpenseFlow.js');
-const monthSummaryFlow = require('./flows/monthSummaryFlow.js');
-const lastMonthSummaryFlow = require('./flows/lastMonthSummaryFlow.js');
-const menuHandlerFlow = require('./flows/menuHandlerFlow.js');
-const currentBudgetFlow = require('./flows/currentBudgetFlow.js');
-
-
-
-
-require('dotenv').config();
-
-
-const parseAllowedNumbers = () => {
-    const raw = process.env.ALLOWED_NUMBERS || '';
-    const entries = raw.split(',').map(entry => {
-        const [number, name] = entry.split(':');
-        return [number.trim(), name.trim()];
-    });
-    return Object.fromEntries(entries);
-};
-
-const allowedNumbers = parseAllowedNumbers();
-
-const PORT = process.env.PORT ?? 3008
-
-const discordFlow = addKeyword('doc').addAnswer(
-    ['You can see the documentation here', '📄 https://builderbot.app/docs \n', 'Do you want to continue? *yes*'].join(
-        '\n'
-    ),
-    { capture: true },
-    async (ctx, { gotoFlow, flowDynamic }) => {
-        if (ctx.body.toLocaleLowerCase().includes('yes')) {
-            return gotoFlow(registerFlow)
-        }
-        await flowDynamic('Thanks!')
-        return
-    }
-) 
-
-const simpleNameFlow = addKeyword(['opo'])
-  .addAnswer('👋 Hi there! What is your name?', { capture: true }, async (ctx, { state, flowDynamic }) => {
-    const userName = ctx.body;
-    await state.update({ name: userName });
-    await flowDynamic(`Hello ${userName}! Nice to meet you. 🌟`);
+process.on('uncaughtException', (error) => {
+    console.error(`[${new Date().toISOString()}] ❌ Uncaught Exception:`, error);
   });
-
-
-const welcomeFlow = addKeyword(['hi', 'hello', 'hola'])
-    .addAnswer(`🙌 Hello welcome to this *Chatbot*`)
-    .addAnswer(
-        [
-            'I share with you the following links of interest about the project',
-            '👉 *doc* to view the documentation',
-        ].join('\n'),
-        { delay: 800, capture: true },
-        async (ctx, { fallBack }) => {
-            if (!ctx.body.toLocaleLowerCase().includes('doc')) {
-                return fallBack('You should type *doc*')
-            }
-            return
-        },
-        [discordFlow]
-    )
-
-const registerFlow = addKeyword(utils.setEvent('REGISTER_FLOW'))
-    .addAnswer(`What is your name?`, { capture: true }, async (ctx, { state }) => {
-        await state.update({ name: ctx.body })
-    })
-    .addAnswer('What is your age?', { capture: true }, async (ctx, { state }) => {
-        await state.update({ age: ctx.body })
-    })
-    .addAction(async (_, { flowDynamic, state }) => {
-        await flowDynamic(`${state.get('name')}, thanks for your information!: Your age: ${state.get('age')}`)
-    })
-
-const fullSamplesFlow = addKeyword(['samples', utils.setEvent('SAMPLES')])
-    .addAnswer(`💪 I'll send you a lot files...`)
-    .addAnswer(`Send image from Local`, { media: join(process.cwd(), 'assets', 'sample.png') })
-    .addAnswer(`Send video from URL`, {
-        media: 'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExYTJ0ZGdjd2syeXAwMjQ4aWdkcW04OWlqcXI3Ynh1ODkwZ25zZWZ1dCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/LCohAb657pSdHv0Q5h/giphy.mp4',
-    })
-    .addAnswer(`Send audio from URL`, { media: 'https://cdn.freesound.org/previews/728/728142_11861866-lq.mp3' })
-    .addAnswer(`Send file from URL`, {
-        media: 'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf',
-    })
-
-const main = async () => {
-
-
-    const adapterProvider = createProvider(Provider, {
-    accountSid: process.env.accountSid,
-    authToken: process.env.authToken,
-    vendorNumber: process.env.vendorNumber,
-    })
-
-    const adapterDB = new Database({
-       host: process.env.POSTGRES_DB_HOST,
-       user: process.env.POSTGRES_DB_USER,
-       database: process.env.POSTGRES_DB_NAME,
-       password: process.env.POSTGRES_DB_PASSWORD,
-       port: +process.env.POSTGRES_DB_PORT
-   })
-
-    const adapterFlow = createFlow([
+  
+  process.on('unhandledRejection', (reason, promise) => {
+    console.error(`[${new Date().toISOString()}] ❌ Unhandled Rejection at:`, promise, 'reason:', reason);
+  });
+  
+  // --- Imports ---
+  
+  const { join } = require('path');
+  const { createBot, createProvider, createFlow, addKeyword, utils } = require('@builderbot/bot');
+  const { PostgreSQLAdapter: Database } = require('@builderbot/database-postgres');
+  const { TwilioProvider: Provider } = require('@builderbot/provider-twilio');
+  require('dotenv').config();
+  
+  // --- Flows ---
+  
+  const budgetFlow = require('./flows/budgetFlow.js');
+  const addExpenseFlow = require('./flows/addExpenseFlow.js');
+  const monthSummaryFlow = require('./flows/monthSummaryFlow.js');
+  const lastMonthSummaryFlow = require('./flows/lastMonthSummaryFlow.js');
+  const menuHandlerFlow = require('./flows/menuHandlerFlow.js');
+  const currentBudgetFlow = require('./flows/currentBudgetFlow.js');
+  
+  // --- Server Configuration ---
+  
+  const PORT = process.env.PORT ?? 3008;
+  
+  // --- Main ---
+  
+  const main = async () => {
+    try {
+      console.log(`[${new Date().toISOString()}] 🚀 Starting BudgetBot...`);
+  
+      const adapterProvider = createProvider(Provider, {
+        accountSid: process.env.accountSid,
+        authToken: process.env.authToken,
+        vendorNumber: process.env.vendorNumber,
+      });
+  
+      const adapterDB = new Database({
+        host: process.env.POSTGRES_DB_HOST,
+        user: process.env.POSTGRES_DB_USER,
+        database: process.env.POSTGRES_DB_NAME,
+        password: process.env.POSTGRES_DB_PASSWORD,
+        port: +process.env.POSTGRES_DB_PORT,
+      });
+  
+      const adapterFlow = createFlow([
         budgetFlow,
         menuHandlerFlow,
         currentBudgetFlow,
         addExpenseFlow,
         monthSummaryFlow,
         lastMonthSummaryFlow
-    ]);
-
-   
-
-
-    const { handleCtx, httpServer } = await createBot({
+      ]);
+  
+      const { handleCtx, httpServer } = await createBot({
         flow: adapterFlow,
         provider: adapterProvider,
         database: adapterDB,
-    })
-
-    // adapterProvider.server.post(
-    //     '/v1/messages',
+      });
+  
+    //   // --- Setup Webhook Route ---
+    //   adapterProvider.server.post(
+    //     '/webhook',
     //     handleCtx(async (bot, req, res) => {
-    //         const { number, message, urlMedia } = req.body
-    //         await bot.sendMessage(number, message, { media: urlMedia ?? null })
-    //         return res.end('sended')
+    //       res.status(200).end();
     //     })
-    // )
-
-    // adapterProvider.server.post(
-    //     '/v1/register',
-    //     handleCtx(async (bot, req, res) => {
-    //         const { number, name } = req.body
-    //         await bot.dispatch('REGISTER_FLOW', { from: number, name })
-    //         return res.end('trigger')
-    //     })
-    // )
-
-    // adapterProvider.server.post(
-    //     '/v1/samples',
-    //     handleCtx(async (bot, req, res) => {
-    //         const { number, name } = req.body
-    //         await bot.dispatch('SAMPLES', { from: number, name })
-    //         return res.end('trigger')
-    //     })
-    // )
-
-    // adapterProvider.server.post(
-    //     '/v1/blacklist',
-    //     handleCtx(async (bot, req, res) => {
-    //         const { number, intent } = req.body
-    //         if (intent === 'remove') bot.blacklist.remove(number)
-    //         if (intent === 'add') bot.blacklist.add(number)
-
-    //         res.writeHead(200, { 'Content-Type': 'application/json' })
-    //         return res.end(JSON.stringify({ status: 'ok', number, intent }))
-    //     })
-    // )
-
-    //httpServer(+PORT)
-
-    httpServer(+PORT);
-    console.log(`🚀 Server running on http://localhost:${PORT}`);
-
-    // 🔥 This keeps the server alive forever
-    // await new Promise(() => {});
-}
-
-main()
+    //   );
+  
+    //   // --- Health Check Route for Railway ---
+    //   adapterProvider.server.get('/', (req, res) => {
+    //     res.status(200).send('✅ BudgetBot is running!');
+    //   });
+  
+      // --- Start Server ---
+      httpServer(+PORT);
+  
+      console.log(`[${new Date().toISOString()}] 🛜 HTTP Server ON`);
+      console.log(`[POST]: http://localhost:${PORT}/webhook`);
+      console.log(`[GET]: http://localhost:${PORT}/`);
+      console.log(`[${new Date().toISOString()}] 🆗 Successful DB Connection`);
+      console.log(`[${new Date().toISOString()}] 🚀 BudgetBot started successfully and ready!`);
+  
+      // --- Keep Node.js process alive ---
+      await new Promise(() => {});
+  
+    } catch (error) {
+      console.error(`[${new Date().toISOString()}] ❌ Fatal Error in main():`, error);
+      process.exit(1); // Optional clean exit
+    }
+  };
+  
+  main();
+  
