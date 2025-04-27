@@ -63,6 +63,13 @@ process.on('uncaughtException', (error) => {
         provider: adapterProvider,
         database: adapterDB,
       });
+
+      adapterProvider.server.post(
+        '/webhook',
+        handleCtx(async (bot, req, res) => {
+          res.status(200).end();
+        })
+      );
   
     //   // --- Setup Webhook Route ---
     //   adapterProvider.server.post(
