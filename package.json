@@ -10,9 +10,9 @@
   },
   "keywords": [],
   "dependencies": {
-    "@builderbot/bot": "1.2.5",
-    "@builderbot/database-postgres": "1.2.5",
-    "@builderbot/provider-twilio": "1.2.5",
+    "@builderbot/bot": "git+https://github.com/NikhilSharma972/chatbotminimal.git",
+    "@builderbot/database-postgres": "git+https://github.com/NikhilSharma972/chatbotminimal.git",
+    "@builderbot/provider-twilio": "git+git+https://github.com/NikhilSharma972/chatbotminimal.git",
     "dotenv": "^16.5.0",
     "pg": "^8.15.6"
   },
