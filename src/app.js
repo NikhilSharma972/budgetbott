@@ -10,7 +10,7 @@ process.on('uncaughtException', (error) => {
   
   // --- Imports ---
   
-  const { join } = require('path');
+  const { join } = require('path'); //not using this
   const { createBot, createProvider, createFlow, addKeyword, utils } = require('@builderbot/bot');
   const { PostgreSQLAdapter: Database } = require('@builderbot/database-postgres');
   const { TwilioProvider: Provider } = require('@builderbot/provider-twilio');
