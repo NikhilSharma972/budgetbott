@@ -41,9 +41,9 @@ RUN npm cache clean --force && pnpm install --production --ignore-scripts \
     && addgroup -g 1001 -S nodejs && adduser -S -u 1001 nodejs \
     && rm -rf $PNPM_HOME/.npm $PNPM_HOME/.node-gyp
 
-RUN pnpm install --filter @builderbot/bot && pnpm build --filter @builderbot/bot && \
-    pnpm install --filter @builderbot/database-postgres && pnpm build --filter @builderbot/database-postgres && \
-    pnpm install --filter @builderbot/provider-twilio && pnpm build --filter @builderbot/provider-twilio
+RUN cd node_modules/@builderbot/bot && pnpm install && npx tsc
+RUN cd node_modules/@builderbot/database-postgres && pnpm install && npx tsc
+RUN cd node_modules/@builderbot/provider-twilio && pnpm install && npx tsc
 
 
 
