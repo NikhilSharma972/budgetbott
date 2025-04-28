@@ -45,7 +45,8 @@ process.on('uncaughtException', (error) => {
       adapterProvider.server.post(
         '/webhook',
         async (req, res) => {
-          const { from, body } = req.body;
+          const { from, body } = req.body; 
+          console.log(`[Webhook HIT]: Incoming from: ${req.body.From}, Message: ${req.body.Body}`);
           await adapterProvider.incoming(from, body); // Pass to builderbot
           res.status(200).end(); // Clean empty 200 OK
         }
