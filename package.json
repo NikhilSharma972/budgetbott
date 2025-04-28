@@ -10,9 +10,9 @@
   },
   "keywords": [],
   "dependencies": {
-    "@builderbot/bot": "https://github.com/NikhilSharma972/chatbotminimal.git",
-    "@builderbot/database-postgres": "https://github.com/NikhilSharma972/chatbotminimal.git",
-    "@builderbot/provider-twilio": "https://github.com/NikhilSharma972/chatbotminimal.git",
+    "@builderbot/bot": "https://github.com/NikhilSharma972/chatbotmain.git",
+    "@builderbot/database-postgres": "https://github.com/NikhilSharma972/chatbotdatabase.git",
+    "@builderbot/provider-twilio": "https://github.com/NikhilSharma972/chatbottwilio.git",
     "dotenv": "^16.5.0",
     "pg": "^8.15.6"
   },
