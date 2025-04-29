@@ -25,6 +25,7 @@ const addExpenseFlow = addKeyword('ADD_EXPENSE_FLOW')
       const notes = ctx.body.trim();
       await state.update({ notes });
       // No intermediate feedback here either
+      //this is for adding expense description
     }
   )  
   .addAnswer(
