@@ -23,13 +23,13 @@ const showMainMenu = async (flowDynamic) => {
 Track how much you've spent 💸
 ━━━━━━━━━━━━━━━━
 *2️⃣ Add an Expense*
-Record a new transaction 📝
+Record a new spend 📝
 ━━━━━━━━━━━━━━━━
 *3️⃣ Create This Month's Summary*
-Get a full report 📊
+Get a full expenditure report 📊
 ━━━━━━━━━━━━━━━━
 *4️⃣ View Last Month's Summary*
-See past performance 📈
+See past month expenditure report 📈
 ━━━━━━━━━━━━━━━━
 
 👉 *Please reply with 1, 2, 3 or 4*`
