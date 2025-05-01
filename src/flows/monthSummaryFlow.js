@@ -42,7 +42,25 @@ const monthSummaryFlow = addKeyword('MONTH_SUMMARY')
 
       if(daysYouWillLast > (totalDaysInMonth - currentDay || 1) ){
         daysYouWillLast = (totalDaysInMonth - currentDay || 1);
+      } 
+
+      const topExpensesResult = await pool_.query(
+        `SELECT notes, amount FROM expenses WHERE month = $1 AND year = $2 ORDER BY amount DESC LIMIT 5`,
+        [month, year]
+      );
+      
+      const topExpenses = topExpensesResult.rows;
+      
+      let topExpenseText = '💸 *Top 5 Expenses This Month:*\n';
+      
+      if (topExpenses.length > 0) {
+        topExpenses.forEach((expense, index) => {
+          topExpenseText += `${index + 1}. ${expense.notes} - ₹${parseFloat(expense.amount).toLocaleString()}\n`;
+        });
+      } else {
+        topExpenseText += 'No expenses recorded yet this month.\n';
       }
+      
 
       // Create a summary message
       let dailyLimit = budget / totalDaysInMonth  ;
@@ -63,6 +81,8 @@ const monthSummaryFlow = addKeyword('MONTH_SUMMARY')
 📉 *Daily Spending Limit to Stay on Track:* ₹${requiredAvgSpend.toFixed(2)}
 
 🕰️ *At your current pace, your money will last another* *${daysYouWillLast} days*.
+
+${topExpenseText}
 
 ${comment}
 `;
