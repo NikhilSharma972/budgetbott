@@ -46,7 +46,7 @@ const monthSummaryFlow = addKeyword('MONTH_SUMMARY')
 
       const topExpensesResult = await pool_.query(
         `SELECT notes, amount FROM expenses WHERE month = $1 AND year = $2 ORDER BY amount DESC LIMIT 5`,
-        [month, year]
+        [currentMonth, currentYear]
       );
       
       const topExpenses = topExpensesResult.rows;
