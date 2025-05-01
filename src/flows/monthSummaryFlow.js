@@ -83,7 +83,6 @@ const monthSummaryFlow = addKeyword('MONTH_SUMMARY')
 🕰️ *At your current pace, your money will last another* *${daysYouWillLast} days*.
 
 ${topExpenseText}
-
 ${comment}
 `;
 
